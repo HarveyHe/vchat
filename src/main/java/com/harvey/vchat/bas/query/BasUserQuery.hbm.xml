@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<sql-query name="BasUserQuery">
+		<![CDATA[
+
+select employee_no from bas_users bu
+left join bas_code_def bcd on bcd.code_value=bu.status
+ where bcd.display_value='NORMAL'
+<<and (employee_no = :userName or user_name= :userName)>>
+
+		]]>
+	</sql-query>
+</hibernate-mapping>

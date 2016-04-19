@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<hibernate-mapping xmlns="http://www.hibernate.org/xsd/hibernate-mapping" 
+                   xsi:schemaLocation="http://www.hibernate.org/xsd/hibernate-mapping classpath://org/hibernate/hibernate-mapping-4.0.xsd" 
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <sql-query name="BasUserMenusQuery">
+        <![CDATA[
+with MenuGroup as(
+ select g.sys_menu_group_uuid as menu_uuid,
+        nvl(g.pre_sys_menu_group_uuid,'0') as p_menu_uuid,
+        g.menu_grp_name as menu_name,
+        g.icon_cls,
+        '' as menu_url,
+        g.menu_grp_seq,
+        0 as menu_item_seq 
+ from bas_menu_group g where g.status = 'ACTIVE' and g.visible=1
+), MenuItem as(
+ select m.sys_menu_item_uuid as menu_uuid,
+        m.sys_menu_group_uuid as p_menu_uuid,
+        m.menu_item_name as menu_name,
+        m.icon_cls,
+        m.menu_item_url as menu_url,
+        0 as menu_grp_seq,
+        m.menu_item_seq 
+ from bas_menu_item m,MenuGroup g
+ where m.sys_menu_group_uuid = g.menu_uuid and m.status = 'ACTIVE' and m.visible=1
+),Menus as(
+ select distinct t.* from(
+   select * from MenuGroup union all select * from MenuItem
+ ) t,bas_menu_roles mr,bas_users_roles ur
+ where t.menu_uuid = mr.menu_id and mr.role_id = ur.role_id and ur.status = 'ACTIVE' and ur.user_id = :userId
+ order by t.menu_grp_seq,t.menu_item_seq
+)select * from menus        
+        ]]>
+    </sql-query>
+</hibernate-mapping>

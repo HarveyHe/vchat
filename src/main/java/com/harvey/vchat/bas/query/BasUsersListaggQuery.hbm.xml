@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<hibernate-mapping xmlns="http://www.hibernate.org/xsd/hibernate-mapping" 
+                   xsi:schemaLocation="http://www.hibernate.org/xsd/hibernate-mapping classpath://org/hibernate/hibernate-mapping-4.0.xsd" 
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <sql-query name="BasUsersListaggQuery">
+        <![CDATA[
+with temp as(  
+select u.users_id,
+	u.user_name,
+	u.employee_no,
+	u.department_name,
+	u.sensitive_password,
+    u.email,
+    u.finance_approval_amount,
+    u.data_scope,u.status,
+    u.modifier,u.modify_time,
+    t_ur.role_name,
+    bc.company_id,
+    bc.company_name,
+    bc.company_short_name,
+    u.DOMAIN_USER_NAME,
+    u.IS_NEED_CONFIRM_PASSWORD,
+    u.EMP_GRADE
+from bas_users u left join (select r.role_name,ur.user_id
+from bas_users_roles ur left join bas_roles r on (r.role_id=ur.role_id and ur.status='ACTIVE')) t_ur  on t_ur.user_id=u.users_id
+left join bas_company bc on u.company_id=bc.company_id
+where   1=1 
+          <<  and  u.employee_no =:employeeNo>> 
+    << and u.users_id in (
+    		select ur.user_id   
+    		from bas_users_roles ur left join bas_roles r on (r.role_id=ur.role_id and ur.status='ACTIVE')
+    		where r.role_name =:roleName ) >>
+ order by u.employee_no
+)  
+select u.users_id,u.user_name,u.employee_no,u.department_name,u.sensitive_password,
+    u.email,u.finance_approval_amount,u.data_scope,u.status,u.modifier,u.modify_time,u.company_id,u.company_name,u.company_short_name,u.DOMAIN_USER_NAME,u.IS_NEED_CONFIRM_PASSWORD,u.EMP_GRADE, listagg ( role_name ,',')  within GROUP ( order by role_name ) as role_name
+from temp u
+group by u.users_id,u.user_name,u.employee_no,u.department_name,u.sensitive_password,
+    u.email,u.finance_approval_amount,u.data_scope,u.status,u.modifier,u.modify_time,u.company_id,u.company_name,u.company_short_name,u.DOMAIN_USER_NAME,u.IS_NEED_CONFIRM_PASSWORD,u.EMP_GRADE
+order by u.employee_no          
+        ]]>
+    </sql-query>
+</hibernate-mapping>

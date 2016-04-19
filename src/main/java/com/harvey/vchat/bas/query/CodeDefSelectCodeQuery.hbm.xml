@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<sql-query name="CodeDefSelectCodeQuery">
+		<![CDATA[
+
+select ct.type_code,
+       cd.code_value,
+       cd.display_value,
+       cd.display_value_en,
+       cd.code_number,
+       cd.control_word
+from bas_code_type ct, bas_code_def cd
+where ct.bas_code_type_uuid = cd.bas_code_type_uuid
+<< and ct.type_code = :codeType >>
+<< and cd.code_value= :codeValue >>
+  and ct.status = 'ACTIVE'
+  and cd.status = 'ACTIVE'
+	order by  cast  (cd.code_number   as   int)
+		]]>
+	</sql-query>
+</hibernate-mapping>

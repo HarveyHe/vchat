@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<sql-query name="CodeTypeQuery">
+		<![CDATA[
+
+select
+  *
+from 
+  bas_code_type t
+where 1=1
+<< and t.type_code like '%' || :typeCode || '%' >>
+<< and t.type_name like '%' || :typeName || '%' >>
+<< and t.status=:status >>
+and ##CONDITIONS##
+
+		]]>
+	</sql-query>
+</hibernate-mapping>

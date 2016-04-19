@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<hibernate-mapping xmlns="http://www.hibernate.org/xsd/hibernate-mapping" 
+                   xsi:schemaLocation="http://www.hibernate.org/xsd/hibernate-mapping classpath://org/hibernate/hibernate-mapping-4.0.xsd" 
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <sql-query name="BasUsersWithDeptInfoQuery">
+        <![CDATA[
+select u.users_id,u.employee_no,u.department_name,u.email,u.user_name,
+u.status,u.user_name_en,
+u.company_id,u.company_name,u.emp_grade,
+bd.department_short_name,
+bc.company_short_name,
+case when u.user_name_en is not null then
+     case when bd.department_short_name is not null then
+          case when bc.company_short_name  is not null then u.user_name_en || '/' || bd.department_short_name || '/' || bc.company_short_name 
+          else u.user_name_en || '/' || bd.department_short_name 
+          end
+     else
+          case when bc.company_short_name  is not null then u.user_name_en  || '/' || bc.company_short_name 
+          else u.user_name_en 
+          end
+     end
+     
+else
+     case  when bd.department_short_name is not null then
+          case when bc.company_short_name  is not null then u.user_name || '/' || bd.department_short_name || '/' || bc.company_short_name 
+          else u.user_name || '/' || bd.department_short_name 
+          end
+     else
+          case  when bc.company_short_name  is not null then u.user_name || '/' || bc.company_short_name 
+          else u.user_name 
+          end 
+    end
+end as user_name_show
+from bas_users u left join bas_department bd on  bd.department_name = u.department_name
+left join bas_company bc on u.company_id = bc.company_id
+
+
+        
+        ]]>
+    </sql-query>
+</hibernate-mapping>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<sql-query name="CodeDefQuery">
+		<![CDATA[
+
+select
+  d.*,
+  BAS_CODE_TYPE.TYPE_CODE as code_type
+from
+  bas_code_def d,
+  BAS_CODE_TYPE
+where d.BAS_CODE_TYPE_UUID = BAS_CODE_TYPE.BAS_CODE_TYPE_UUID
+<< and d.bas_code_type_uuid = :basCodeTypeUuid>>
+<< and d.code_value like '%' || :codeValue || '%' >>
+<< and d.status=:status >>
+order by  cast   (d.code_number   as   int)
+
+
+		]]>
+	</sql-query>
+</hibernate-mapping>

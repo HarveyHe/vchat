@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<hibernate-mapping xmlns="http://www.hibernate.org/xsd/hibernate-mapping" 
+                   xsi:schemaLocation="http://www.hibernate.org/xsd/hibernate-mapping classpath://org/hibernate/hibernate-mapping-4.0.xsd" 
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <sql-query name="BasUsersRolesQuery">
+        <![CDATA[
+select u.users_id,u.user_name,u.employee_no,u.department_name,
+    u.email,u.finance_approval_amount,u.data_scope,u.status,u.modifier,u.modify_time,
+    r.role_name,r.role_id,ur.bas_users_roles_id,ur.status as users_roles_stats
+from bas_users u , bas_users_roles  ur,bas_roles r 
+where  r.role_id=ur.role_id and u.users_id=ur.user_id  and ur.status='ACTIVE'
+<< and r.role_name = :roleName >>
+<< and u.employee_no=:employeeNo >>
+<< and u.users_Id = :usersId >>        
+        ]]>
+    </sql-query>
+</hibernate-mapping>
